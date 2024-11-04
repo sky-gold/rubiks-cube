@@ -1,12 +1,9 @@
-#include <array>
-#include <cstddef>
-#include <cstdint>
 #include <iostream>
 
 #include "cube/flat_cube.h"
 #include "cube/move_utils.h"
 
-constexpr size_t N = 2;
+constexpr size_t N = 3;
 
 char a[3 * N][4 * N];
 
