@@ -1,27 +1,34 @@
 #pragma once
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
-#include "move_utils.h"
+#include "move.h"
 
 constexpr size_t MAX_CUBE_SIZE = 17;
 constexpr size_t MIN_CUBE_SIZE = 2;
 constexpr size_t FACES_COUNT = 6;
 
+namespace cube {
 
-enum class Face : uint8_t { U = 0, D = 1, F = 2, B = 3, L = 4, R = 5 };
+using CubeLayout = std::array<std::vector<uint8_t>, FACES_COUNT>;
 
-template <size_t N> class Cube {
+class Cube {
 public:
-  Cube();
+  Cube(size_t n);
 
   virtual bool IsSolved() const = 0;
 
   virtual void Turn(Move move) = 0;
+
+  virtual const CubeLayout &GetCubeLayout() const = 0;
+
+  virtual size_t GetHash() const = 0;
+
+protected:
+  const size_t n_;
 };
 
-template <size_t N> Cube<N>::Cube() {
-  static_assert(MIN_CUBE_SIZE <= N && N <= MAX_CUBE_SIZE,
-                "Cube size must be between 2x2x2 and 17x17x17");
-}
+} // namespace cube
