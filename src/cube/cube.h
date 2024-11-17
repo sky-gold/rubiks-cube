@@ -27,6 +27,8 @@ public:
 
   virtual size_t GetHash() const = 0;
 
+  size_t GetSize() const;
+
 protected:
   const size_t n_;
 };

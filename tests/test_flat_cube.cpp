@@ -16,14 +16,16 @@ std::vector<int> bfs(const cube::SimpleFlatCube flat_cube, int limit) {
     }
     for (int face = 0; face < 6; ++face) {
       for (int rotation = 1; rotation <= 3; ++rotation) {
-        auto move = cube::GetMove(0, rotation, face);
-        auto neighbor = cur;
-        neighbor.Turn(move);
-        if (distance.count(neighbor)) {
-          continue;
+        for (int index = 0; index < flat_cube.GetSize() / 2; ++index) {
+          auto move = cube::GetMove(index, rotation, face);
+          auto neighbor = cur;
+          neighbor.Turn(move);
+          if (distance.count(neighbor)) {
+            continue;
+          }
+          q.push_back(neighbor);
+          distance[neighbor] = distance[cur] + 1;
         }
-        q.push_back(neighbor);
-        distance[neighbor] = distance[cur] + 1;
       }
     }
   }
@@ -34,6 +36,13 @@ std::vector<int> bfs(const cube::SimpleFlatCube flat_cube, int limit) {
   return ans;
 }
 
+TEST(FlatCubeTest, TestCountOfPositions2x2x2) {
+  std::vector<int> positions_count = bfs(cube::SimpleFlatCube(2), 4);
+  std::vector<int> expected_count = {
+      1, 9, 54, 321}; // Values from https://en.wikipedia.org/wiki/Pocket_Cube
+  EXPECT_EQ(positions_count, expected_count);
+}
+
 TEST(FlatCubeTest, TestCountOfPositions3x3x3) {
   std::vector<int> positions_count = bfs(cube::SimpleFlatCube(3), 5);
   std::vector<int> expected_count = {
@@ -41,9 +50,16 @@ TEST(FlatCubeTest, TestCountOfPositions3x3x3) {
   EXPECT_EQ(positions_count, expected_count);
 }
 
-TEST(FlatCubeTest, TestCountOfPositions2x2x2) {
-  std::vector<int> positions_count = bfs(cube::SimpleFlatCube(2), 4);
+TEST(FlatCubeTest, TestCountOfPositions4x4x4) {
+  std::vector<int> positions_count = bfs(cube::SimpleFlatCube(4), 3);
   std::vector<int> expected_count = {
-      1, 9, 54, 321}; // Values from https://en.wikipedia.org/wiki/Pocket_Cube
+      1, 36, 1023}; // Not found public data, maybe incorrect
+  EXPECT_EQ(positions_count, expected_count);
+}
+
+TEST(FlatCubeTest, TestCountOfPositions5x5x5) {
+  std::vector<int> positions_count = bfs(cube::SimpleFlatCube(5), 5);
+  std::vector<int> expected_count = {
+      1, 36, 1026, 28812, 806988}; // Not found public data, maybe incorrect
   EXPECT_EQ(positions_count, expected_count);
 }

@@ -20,6 +20,7 @@ public:
 
 private:
   CubeLayout cube_;
+  mutable std::vector<CubeLayout> cube_layouts_;
 };
 
 } // namespace cube

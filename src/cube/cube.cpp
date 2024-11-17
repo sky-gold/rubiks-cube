@@ -7,4 +7,9 @@ Cube::Cube(size_t n) : n_(n) {
     throw std::logic_error("Cube size must be between 2 and 17");
   }
 }
+
+size_t Cube::GetSize() const {
+  return n_;
+}
+
 } // namespace cube

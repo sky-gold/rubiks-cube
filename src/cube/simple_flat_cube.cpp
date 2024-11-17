@@ -9,20 +9,21 @@ namespace cube {
 namespace {
 
 std::vector<CubeLayout> GetAllRotates(SimpleFlatCube cube) {
-  // TODO: check that n_ == 2 and (n_ % 2) == 1s
   // TODO: change to x, x', y, y', z, z' rotates
   std::vector<CubeLayout> result;
   for (size_t i = 0; i < 4; ++i) {
     for (size_t j = 0; j < 4; ++j) {
       for (size_t k = 0; k < 4; ++k) {
-        cube.Turn(GetMove(0, i, Face::U));
-        cube.Turn(GetMove(0, 4 - i, Face::D));
+        for (size_t l = 0; l < cube.GetSize() / 2; ++l) {
+          cube.Turn(GetMove(l, i, Face::U));
+          cube.Turn(GetMove(l, 4 - i, Face::D));
 
-        cube.Turn(GetMove(0, j, Face::L));
-        cube.Turn(GetMove(0, 4 - j, Face::R));
+          cube.Turn(GetMove(l, j, Face::L));
+          cube.Turn(GetMove(l, 4 - j, Face::R));
 
-        cube.Turn(GetMove(0, k, Face::F));
-        cube.Turn(GetMove(0, 4 - k, Face::B));
+          cube.Turn(GetMove(l, k, Face::F));
+          cube.Turn(GetMove(l, 4 - k, Face::B));
+        }
 
         auto cube_layout = cube.GetCubeLayout();
 
@@ -36,15 +37,16 @@ std::vector<CubeLayout> GetAllRotates(SimpleFlatCube cube) {
         if (!already_found) {
           result.push_back(std::move(cube_layout));
         }
+        for (size_t l = 0; l < cube.GetSize() / 2; ++l) {
+          cube.Turn(GetMove(l, 4 - k, Face::F));
+          cube.Turn(GetMove(l, k, Face::B));
 
-        cube.Turn(GetMove(0, 4 - k, Face::F));
-        cube.Turn(GetMove(0, k, Face::B));
+          cube.Turn(GetMove(l, 4 - j, Face::L));
+          cube.Turn(GetMove(l, j, Face::R));
 
-        cube.Turn(GetMove(0, 4 - j, Face::L));
-        cube.Turn(GetMove(0, j, Face::R));
-
-        cube.Turn(GetMove(0, 4 - i, Face::U));
-        cube.Turn(GetMove(0, i, Face::D));
+          cube.Turn(GetMove(l, 4 - i, Face::U));
+          cube.Turn(GetMove(l, i, Face::D));
+        }
       }
     }
   }
@@ -186,6 +188,7 @@ bool SimpleFlatCube::IsSolved() const {
 }
 
 void SimpleFlatCube::Turn(Move move) {
+  cube_layouts_.clear();
   for (int i = 0; i < getRotation(move); ++i) {
     ClockwiseRotate(n_, cube_, GetFace(move), GetMoveIndex(move));
   }
@@ -197,9 +200,12 @@ size_t SimpleFlatCube::GetHash() const {
   if (n_ % 2) {
     return CalculateHash(cube_);
   }
-  const auto layouts = GetAllRotates(*this);
+  if (cube_layouts_.empty()) {
+    cube_layouts_ = GetAllRotates(*this);
+  }
+
   size_t result = CalculateHash(cube_);
-  for (auto &layout : layouts) {
+  for (const auto &layout : cube_layouts_) {
     size_t cur_result = CalculateHash(layout);
     if (cur_result < result) {
       result = cur_result;
@@ -212,15 +218,16 @@ bool SimpleFlatCube::operator==(const SimpleFlatCube &other) const {
   if (n_ % 2) {
     return GetCubeLayout() == other.GetCubeLayout();
   }
-  if (n_ == 2) {
-    for (const auto &other_layout : GetAllRotates(other)) {
-      if (GetCubeLayout() == other_layout) {
-        return true;
-      }
-    }
-    return false;
+
+  if (cube_layouts_.empty()) {
+    cube_layouts_ = GetAllRotates(*this);
   }
-  throw std::logic_error("not implemented for n_=" + std::to_string(n_));
+  for (const auto &layout : cube_layouts_) {
+    if (layout == other.GetCubeLayout()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 } // namespace cube
