@@ -1,9 +1,9 @@
 #include "cube/move.h"
-#include "cube/simple_flat_cube.h"
+#include "cube/cube.h"
 #include "presentation/cube_presentation.h"
 
 int main() {
-  cube::SimpleFlatCube cube(3);
+  cube::Cube cube{};
   presentation::PrintCube(cube.GetCubeLayout());
   // std::string move_string = "R U R' U'";
   // for (int i = 0; i < 5; ++i) {

@@ -45,7 +45,7 @@ Move GetMoveFromString(const std::string &move_string) {
   } else if (rotation_string == "2") {
     rotation = 2;
   }
-  return GetMove(move_index, rotation, face);
+  return GetMove(rotation, face);
 }
 
 std::vector<Move> GetMovesFromString(const std::string &moves_string) {

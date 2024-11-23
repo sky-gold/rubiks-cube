@@ -1,14 +1,13 @@
 #pragma once
 
+#include "move.h"
+
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <vector>
 
-#include "move.h"
-
-constexpr size_t MAX_CUBE_SIZE = 17;
-constexpr size_t MIN_CUBE_SIZE = 2;
+constexpr size_t CUBE_SIZE = 3;
 constexpr size_t FACES_COUNT = 6;
 
 namespace cube {
@@ -17,20 +16,41 @@ using CubeLayout = std::array<std::vector<uint8_t>, FACES_COUNT>;
 
 class Cube {
 public:
-  Cube(size_t n);
+  Cube();
 
-  virtual bool IsSolved() const = 0;
+  bool IsSolved() const;
 
-  virtual void Turn(Move move) = 0;
+  void Turn(Move move);
 
-  virtual const CubeLayout &GetCubeLayout() const = 0;
+  const CubeLayout &GetCubeLayout() const;
 
-  virtual size_t GetHash() const = 0;
+  size_t GetHash() const;
 
   size_t GetSize() const;
 
-protected:
-  const size_t n_;
+  bool operator==(const Cube &other) const;
+
+private:
+  CubeLayout cube_;
+
+  void Swap(const std::vector<std::pair<uint8_t, size_t>> &first,
+            const std::vector<std::pair<uint8_t, size_t>> &second);
+
+  std::vector<std::pair<uint8_t, size_t>> GetRow(uint8_t face, uint8_t row,
+                                                 bool reversed) const;
+  std::vector<std::pair<uint8_t, size_t>> GetCol(uint8_t face, uint8_t col,
+                                                 bool reversed) const;
+  
+  void ClockwiseEdgeRotate(uint8_t face);
+  void ClockwiseFaceRotate(uint8_t face);
 };
 
 } // namespace cube
+
+namespace std {
+
+template <> struct hash<cube::Cube> {
+  size_t operator()(const cube::Cube &cube) const { return cube.GetHash(); }
+};
+
+} // namespace std
