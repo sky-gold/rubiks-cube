@@ -30,6 +30,8 @@ public:
 
   bool operator==(const Cube &other) const;
 
+  bool operator!=(const Cube &other) const;
+
 private:
   CubeLayout cube_;
 

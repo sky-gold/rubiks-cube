@@ -117,7 +117,7 @@ bool Cube::IsSolved() const {
       }
     }
   }
-  return false;
+  return true;
 }
 
 void Cube::Turn(Move move) {
@@ -145,5 +145,10 @@ size_t Cube::GetHash() const {
 bool Cube::operator==(const Cube &other) const {
   return GetCubeLayout() == other.GetCubeLayout();
 }
+
+bool Cube::operator!=(const Cube &other) const {
+  return GetCubeLayout() != other.GetCubeLayout();
+}
+
 
 } // namespace cube

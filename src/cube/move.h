@@ -37,4 +37,8 @@ Move GetMoveFromString(const std::string &move_string);
 
 std::vector<Move> GetMovesFromString(const std::string &moves_string);
 
+std::string MoveToString(Move move);
+
+std::string MovesToString(const std::vector<Move>& moves);
+
 } // namespace cube
