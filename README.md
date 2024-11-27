@@ -22,7 +22,10 @@ build/src/rubiks_cube_solver < static/5.txt
 
 ## Скорость работы
 
-```
-> time build/src/rubiks_cube_solver < static/5.txt  
-build/src/rubiks_cube_solver < static/5.txt  566.26s user 2.28s system 99% cpu 9:28.57 total
-```
+| Расстояние | Время (секунды) | Память (килобайты) |
+|-----------------------|-----------------|--------------------|
+| 1 | 0.01 | 3840 |
+| 2 | 0.26 | 6008 |
+| 3 | 2.6 | 35476 |
+| 4 | 42.98 | 464504 |
+| 5 | 572.78 | 5671788 |
