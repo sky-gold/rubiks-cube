@@ -43,8 +43,11 @@ private:
   std::vector<std::pair<uint8_t, size_t>> GetCol(uint8_t face, uint8_t col,
                                                  bool reversed) const;
   
-  void ClockwiseEdgeRotate(uint8_t face);
+  void EdgeRotate(uint8_t face, uint8_t rotation);
+
   void ClockwiseFaceRotate(uint8_t face);
+  void CounterclockwiseFaceRotate(uint8_t face);
+  void HalfTurnFaceRotate(uint8_t face);
 };
 
 } // namespace cube

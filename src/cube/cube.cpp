@@ -6,7 +6,7 @@
 
 namespace cube {
 
-void Cube::ClockwiseEdgeRotate(uint8_t face) {
+void Cube::EdgeRotate(uint8_t face, uint8_t rotation) {
   assert(face < FACES_COUNT);
   std::array<std::vector<std::pair<uint8_t, size_t>>, 4> rotate_edges;
   switch (face) {
@@ -47,9 +47,20 @@ void Cube::ClockwiseEdgeRotate(uint8_t face) {
     rotate_edges[3] = GetCol(Face::F, CUBE_SIZE - 1, true);
     break;
   }
-  Swap(rotate_edges[0], rotate_edges[1]);
-  Swap(rotate_edges[2], rotate_edges[3]);
-  Swap(rotate_edges[0], rotate_edges[2]);
+  if (rotation == 1) {
+    Swap(rotate_edges[0], rotate_edges[1]);
+    Swap(rotate_edges[2], rotate_edges[3]);
+    Swap(rotate_edges[0], rotate_edges[2]);
+  }
+  if (rotation == 2) {
+    Swap(rotate_edges[0], rotate_edges[2]);
+    Swap(rotate_edges[1], rotate_edges[3]);
+  }
+  if (rotation == 3) {
+    Swap(rotate_edges[0], rotate_edges[3]);
+    Swap(rotate_edges[0], rotate_edges[1]);
+    Swap(rotate_edges[1], rotate_edges[2]);
+  }
 }
 
 void Cube::ClockwiseFaceRotate(uint8_t face) {
@@ -66,6 +77,29 @@ void Cube::ClockwiseFaceRotate(uint8_t face) {
     }
   }
 }
+
+void Cube::CounterclockwiseFaceRotate(uint8_t face) {
+  std::vector<uint8_t> new_face(CUBE_SIZE * CUBE_SIZE);
+  for (size_t i = 0; i < CUBE_SIZE; ++i) {
+    for (size_t j = 0; j < CUBE_SIZE; ++j) {
+      new_face[(CUBE_SIZE - 1 - j) * CUBE_SIZE + i] =
+          cube_[face][i * CUBE_SIZE + j];
+    }
+  }
+  cube_[face] = std::move(new_face);
+}
+
+void Cube::HalfTurnFaceRotate(uint8_t face) {
+  std::vector<uint8_t> new_face(CUBE_SIZE * CUBE_SIZE);
+  for (size_t i = 0; i < CUBE_SIZE; ++i) {
+    for (size_t j = 0; j < CUBE_SIZE; ++j) {
+      new_face[(CUBE_SIZE - 1 - i) * CUBE_SIZE + (CUBE_SIZE - 1 - j)] =
+          cube_[face][i * CUBE_SIZE + j];
+    }
+  }
+  cube_[face] = std::move(new_face);
+}
+
 
 std::vector<std::pair<uint8_t, size_t>> Cube::GetRow(uint8_t face, uint8_t row,
                                                      bool reversed) const {
@@ -121,10 +155,17 @@ bool Cube::IsSolved() const {
 }
 
 void Cube::Turn(Move move) {
-  for (int i = 0; i < getRotation(move); ++i) {
+  EdgeRotate(GetFace(move), getRotation(move));
+  if (getRotation(move) == 1) {
     ClockwiseFaceRotate(GetFace(move));
-    ClockwiseEdgeRotate(GetFace(move));
   }
+  if (getRotation(move) == 2) {
+    HalfTurnFaceRotate(GetFace(move));
+  }
+  if (getRotation(move) == 3) {
+    CounterclockwiseFaceRotate(GetFace(move));
+  }
+
 }
 
 const CubeLayout &Cube::GetCubeLayout() const { return cube_; }
