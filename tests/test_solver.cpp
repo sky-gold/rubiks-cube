@@ -4,7 +4,9 @@
 
 #include <random>
 
-std::mt19937 rnd(0);
+std::mt19937 rnd(123);
+
+namespace {
 
 std::vector<cube::Move> getRandomMoves(size_t n) {
     std::uniform_int_distribution<> face_dis(0, 5);
@@ -21,6 +23,8 @@ void TurnMoves(cube::Cube& cube, const std::vector<cube::Move>& moves) {
     for (auto move: moves) {
         cube.Turn(move);
     }
+}
+
 }
 
 TEST(Solver, TestRandom) {

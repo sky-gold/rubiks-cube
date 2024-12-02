@@ -5,6 +5,8 @@
 
 #include "cube/cube.h"
 
+namespace {
+
 std::vector<int> bfs(const cube::Cube flat_cube, int limit) {
   std::unordered_map<cube::Cube, size_t> distance;
   std::vector<cube::Cube> q = {flat_cube};
@@ -32,6 +34,8 @@ std::vector<int> bfs(const cube::Cube flat_cube, int limit) {
     ++ans[to.second];
   }
   return ans;
+}
+
 }
 
 TEST(PositionsCount, TestBFS) {

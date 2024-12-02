@@ -35,9 +35,6 @@ public:
 private:
   CubeLayout cube_;
 
-  void Swap(const std::vector<std::pair<uint8_t, size_t>> &first,
-            const std::vector<std::pair<uint8_t, size_t>> &second);
-
   std::vector<std::pair<uint8_t, size_t>> GetRow(uint8_t face, uint8_t row,
                                                  bool reversed) const;
   std::vector<std::pair<uint8_t, size_t>> GetCol(uint8_t face, uint8_t col,

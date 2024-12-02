@@ -47,19 +47,16 @@ void Cube::EdgeRotate(uint8_t face, uint8_t rotation) {
     rotate_edges[3] = GetCol(Face::F, CUBE_SIZE - 1, true);
     break;
   }
-  if (rotation == 1) {
-    Swap(rotate_edges[0], rotate_edges[1]);
-    Swap(rotate_edges[2], rotate_edges[3]);
-    Swap(rotate_edges[0], rotate_edges[2]);
+  std::vector<uint8_t> new_edge_part(12);
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      new_edge_part[(3 * i + j + rotation * 3) % 12] = cube_[rotate_edges[i][j].first][rotate_edges[i][j].second];
+    }
   }
-  if (rotation == 2) {
-    Swap(rotate_edges[0], rotate_edges[2]);
-    Swap(rotate_edges[1], rotate_edges[3]);
-  }
-  if (rotation == 3) {
-    Swap(rotate_edges[0], rotate_edges[3]);
-    Swap(rotate_edges[0], rotate_edges[1]);
-    Swap(rotate_edges[1], rotate_edges[2]);
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      cube_[rotate_edges[i][j].first][rotate_edges[i][j].second] = new_edge_part[3 * i + j];
+    }
   }
 }
 
@@ -125,15 +122,6 @@ std::vector<std::pair<uint8_t, size_t>> Cube::GetCol(uint8_t face, uint8_t col,
   return result;
 }
 
-void Cube::Swap(const std::vector<std::pair<uint8_t, size_t>> &first,
-                const std::vector<std::pair<uint8_t, size_t>> &second) {
-  assert(first.size() == second.size());
-  for (int i = 0; i < first.size(); ++i) {
-    std::swap(cube_[first[i].first][first[i].second],
-              cube_[second[i].first][second[i].second]);
-  }
-}
-
 Cube::Cube() {
   for (size_t i = 0; i < FACES_COUNT; ++i) {
     cube_[i].resize(CUBE_SIZE * CUBE_SIZE);
@@ -174,8 +162,8 @@ size_t Cube::GetHash() const {
   std::hash<uint8_t> hasher;
   size_t seed = 0;
 
-  for (const auto &face : cube_) {
-    for (uint8_t element : face) {
+  for (const auto face_index: {Face::L, Face::R}) {
+    for (uint8_t element : cube_[face_index]) {
       seed ^= hasher(element) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
   }
