@@ -1,6 +1,6 @@
 #include "move.h"
-#include <stdexcept>
 #include <set>
+#include <stdexcept>
 
 namespace cube {
 
@@ -60,8 +60,7 @@ std::vector<Move> GetMovesFromString(const std::string &moves_string) {
 
 std::string MoveToString(Move move) {
   std::string result;
-  switch (GetFace(move))
-  {
+  switch (GetFace(move)) {
   case Face::U:
     result += "U";
     break;
@@ -83,8 +82,7 @@ std::string MoveToString(Move move) {
   default:
     throw std::logic_error("Unsupported face type");
   }
-  switch (getRotation(move))
-  {
+  switch (getRotation(move)) {
   case 1:
     break;
   case 2:
@@ -94,14 +92,15 @@ std::string MoveToString(Move move) {
     result += "'";
     break;
   default:
-    throw std::logic_error("Unsupported rotation type = " + std::to_string(getRotation(move)));
+    throw std::logic_error("Unsupported rotation type = " +
+                           std::to_string(getRotation(move)));
   }
   return result;
 }
 
-std::string MovesToString(const std::vector<Move>& moves) {
+std::string MovesToString(const std::vector<Move> &moves) {
   std::string result;
-  for (auto move: moves) {
+  for (auto move : moves) {
     result += MoveToString(move);
   }
   return result;

@@ -2,182 +2,65 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <stdexcept>
 
 namespace cube {
 
-void Cube::EdgeRotate(uint8_t face, uint8_t rotation) {
-  assert(face < FACES_COUNT);
-  std::array<std::vector<std::pair<uint8_t, size_t>>, 4> rotate_edges;
-  switch (face) {
-  case Face::U:
-    rotate_edges[0] = GetCol(Face::L, CUBE_SIZE - 1, true);
-    rotate_edges[1] = GetRow(Face::B, CUBE_SIZE - 1, false);
-    rotate_edges[2] = GetCol(Face::R, 0, false);
-    rotate_edges[3] = GetRow(Face::F, 0, true);
-    break;
-  case Face::D:
-    rotate_edges[0] = GetCol(Face::R, CUBE_SIZE - 1, true);
-    rotate_edges[1] = GetRow(Face::B, 0, true);
-    rotate_edges[2] = GetCol(Face::L, 0, false);
-    rotate_edges[3] = GetRow(Face::F, CUBE_SIZE - 1, false);
-    break;
-  case Face::F:
-    rotate_edges[0] = GetRow(Face::U, CUBE_SIZE - 1, false);
-    rotate_edges[1] = GetRow(Face::R, CUBE_SIZE - 1, false);
-    rotate_edges[2] = GetRow(Face::D, CUBE_SIZE - 1, false);
-    rotate_edges[3] = GetRow(Face::L, CUBE_SIZE - 1, false);
-    break;
-  case Face::B:
-    rotate_edges[0] = GetRow(Face::U, 0, true);
-    rotate_edges[1] = GetRow(Face::L, 0, true);
-    rotate_edges[2] = GetRow(Face::D, 0, true);
-    rotate_edges[3] = GetRow(Face::R, 0, true);
-    break;
-  case Face::L:
-    rotate_edges[0] = GetCol(Face::U, 0, false);
-    rotate_edges[1] = GetCol(Face::F, 0, false);
-    rotate_edges[2] = GetCol(Face::D, CUBE_SIZE - 1, true);
-    rotate_edges[3] = GetCol(Face::B, 0, false);
-    break;
-  case Face::R:
-    rotate_edges[0] = GetCol(Face::U, CUBE_SIZE - 1, true);
-    rotate_edges[1] = GetCol(Face::B, CUBE_SIZE - 1, true);
-    rotate_edges[2] = GetCol(Face::D, 0, false);
-    rotate_edges[3] = GetCol(Face::F, CUBE_SIZE - 1, true);
-    break;
-  }
-  std::vector<uint8_t> new_edge_part(12);
-  for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 3; ++j) {
-      new_edge_part[(3 * i + j + rotation * 3) % 12] = cube_[rotate_edges[i][j].first][rotate_edges[i][j].second];
-    }
-  }
-  for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 3; ++j) {
-      cube_[rotate_edges[i][j].first][rotate_edges[i][j].second] = new_edge_part[3 * i + j];
-    }
-  }
-}
-
-void Cube::ClockwiseFaceRotate(uint8_t face) {
-  std::vector<uint8_t> new_face(CUBE_SIZE * CUBE_SIZE);
-  for (size_t i = 0; i < CUBE_SIZE; ++i) {
-    for (size_t j = 0; j < CUBE_SIZE; ++j) {
-      new_face[j * CUBE_SIZE + (CUBE_SIZE - 1 - i)] =
-          cube_[face][i * CUBE_SIZE + j];
-    }
-  }
-  cube_[face] = std::move(new_face);
-  for (size_t i = 0; i < CUBE_SIZE; ++i) {
-    for (size_t j = 0; j < CUBE_SIZE; ++j) {
-    }
-  }
-}
-
-void Cube::CounterclockwiseFaceRotate(uint8_t face) {
-  std::vector<uint8_t> new_face(CUBE_SIZE * CUBE_SIZE);
-  for (size_t i = 0; i < CUBE_SIZE; ++i) {
-    for (size_t j = 0; j < CUBE_SIZE; ++j) {
-      new_face[(CUBE_SIZE - 1 - j) * CUBE_SIZE + i] =
-          cube_[face][i * CUBE_SIZE + j];
-    }
-  }
-  cube_[face] = std::move(new_face);
-}
-
-void Cube::HalfTurnFaceRotate(uint8_t face) {
-  std::vector<uint8_t> new_face(CUBE_SIZE * CUBE_SIZE);
-  for (size_t i = 0; i < CUBE_SIZE; ++i) {
-    for (size_t j = 0; j < CUBE_SIZE; ++j) {
-      new_face[(CUBE_SIZE - 1 - i) * CUBE_SIZE + (CUBE_SIZE - 1 - j)] =
-          cube_[face][i * CUBE_SIZE + j];
-    }
-  }
-  cube_[face] = std::move(new_face);
-}
-
-
-std::vector<std::pair<uint8_t, size_t>> Cube::GetRow(uint8_t face, uint8_t row,
-                                                     bool reversed) const {
-  std::vector<std::pair<uint8_t, size_t>> result(CUBE_SIZE);
-  for (size_t i = 0; i < CUBE_SIZE; ++i) {
-    result[i] = {face, row * CUBE_SIZE + i};
-  }
-  if (reversed) {
-    std::reverse(result.begin(), result.end());
-  }
-  return result;
-}
-
-std::vector<std::pair<uint8_t, size_t>> Cube::GetCol(uint8_t face, uint8_t col,
-                                                     bool reversed) const {
-  std::vector<std::pair<uint8_t, size_t>> result(CUBE_SIZE);
-  for (size_t i = 0; i < CUBE_SIZE; ++i) {
-    result[i] = {face, i * CUBE_SIZE + col};
-  }
-  if (reversed) {
-    std::reverse(result.begin(), result.end());
-  }
-  return result;
-}
-
 Cube::Cube() {
-  for (size_t i = 0; i < FACES_COUNT; ++i) {
-    cube_[i].resize(CUBE_SIZE * CUBE_SIZE);
-    for (size_t j = 0; j < CUBE_SIZE * CUBE_SIZE; ++j) {
-      cube_[i][j] = i;
-    }
+  for (size_t i = 0; i < edge_cubies_.size(); ++i) {
+    edge_cubies_[i] = GetEdgeCubie(i, 0);
+  }
+  for (size_t i = 0; i < corner_cubies_.size(); ++i) {
+    corner_cubies_[i] = GetCornerCubie(i, 0);
   }
 }
 
 bool Cube::IsSolved() const {
-  for (size_t i = 0; i < FACES_COUNT; ++i) {
-    for (size_t j = 0; j < CUBE_SIZE * CUBE_SIZE; ++j) {
-      if (cube_[i][j] != i) {
-        return false;
-      }
+  for (size_t i = 0; i < edge_cubies_.size(); ++i) {
+    if (edge_cubies_[i] != GetEdgeCubie(i, 0)) {
+      return false;
+    }
+  }
+  for (size_t i = 0; i < corner_cubies_.size(); ++i) {
+    if (corner_cubies_[i] != GetCornerCubie(i, 0)) {
+      return false;
     }
   }
   return true;
 }
 
 void Cube::Turn(Move move) {
-  EdgeRotate(GetFace(move), getRotation(move));
-  if (getRotation(move) == 1) {
-    ClockwiseFaceRotate(GetFace(move));
+  const std::array<uint8_t, EDGE_CUBIE_CNT> &e_p = edge_permutation[move];
+  for (size_t i = 0; i < edge_cubies_.size(); ++i) {
+    edge_cubies_[i] = e_p[edge_cubies_[i]];
   }
-  if (getRotation(move) == 2) {
-    HalfTurnFaceRotate(GetFace(move));
+  const std::array<uint8_t, CORNER_CUBIE_CNT> &c_p = corner_permutation[move];
+  for (size_t i = 0; i < corner_cubies_.size(); ++i) {
+    corner_cubies_[i] = c_p[corner_cubies_[i]];
   }
-  if (getRotation(move) == 3) {
-    CounterclockwiseFaceRotate(GetFace(move));
-  }
-
 }
 
-const CubeLayout &Cube::GetCubeLayout() const { return cube_; }
-
 size_t Cube::GetHash() const {
-  std::hash<uint8_t> hasher;
   size_t seed = 0;
 
-  for (const auto face_index: {Face::L, Face::R}) {
-    for (uint8_t element : cube_[face_index]) {
-      seed ^= hasher(element) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
+  for (auto to : edge_cubies_) {
+    seed ^= to + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   }
-
+  for (auto to : corner_cubies_) {
+    seed ^= to + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  }
   return seed;
 }
 
 bool Cube::operator==(const Cube &other) const {
-  return GetCubeLayout() == other.GetCubeLayout();
+  return edge_cubies_ == other.edge_cubies_ &&
+         corner_cubies_ == other.corner_cubies_;
 }
 
 bool Cube::operator!=(const Cube &other) const {
-  return GetCubeLayout() != other.GetCubeLayout();
+  return edge_cubies_ != other.edge_cubies_ ||
+         corner_cubies_ != other.corner_cubies_;
 }
-
 
 } // namespace cube

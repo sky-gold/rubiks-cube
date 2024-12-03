@@ -21,3 +21,19 @@ TEST(Turn, TestIsSolved) {
   TurnMoves(cube, moves);
   ASSERT_TRUE(cube.IsSolved());
 }
+
+TEST(Turn, TestPifPaf) {
+  auto cube = cube::Cube();
+  const auto moves_string = "RUR'U'RUR'U'RUR'U'RUR'U'RUR'U'RUR'U'";
+  const auto moves = cube::GetMovesFromString(moves_string);
+  TurnMoves(cube, moves);
+  ASSERT_TRUE(cube.IsSolved());
+}
+
+TEST(Turn, TestEqual) {
+    auto first_cube = cube::Cube();
+    auto second_cube = cube::Cube();
+    TurnMoves(first_cube, cube::GetMovesFromString("B'D'B2R'U'"));
+    TurnMoves(second_cube, cube::GetMovesFromString("D'R'B2U'B'"));
+    ASSERT_EQ(first_cube, second_cube);
+}

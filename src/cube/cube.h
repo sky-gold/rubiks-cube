@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cubie.h"
 #include "move.h"
 
 #include <array>
@@ -22,29 +23,15 @@ public:
 
   void Turn(Move move);
 
-  const CubeLayout &GetCubeLayout() const;
-
   size_t GetHash() const;
-
-  size_t GetSize() const;
 
   bool operator==(const Cube &other) const;
 
   bool operator!=(const Cube &other) const;
 
 private:
-  CubeLayout cube_;
-
-  std::vector<std::pair<uint8_t, size_t>> GetRow(uint8_t face, uint8_t row,
-                                                 bool reversed) const;
-  std::vector<std::pair<uint8_t, size_t>> GetCol(uint8_t face, uint8_t col,
-                                                 bool reversed) const;
-  
-  void EdgeRotate(uint8_t face, uint8_t rotation);
-
-  void ClockwiseFaceRotate(uint8_t face);
-  void CounterclockwiseFaceRotate(uint8_t face);
-  void HalfTurnFaceRotate(uint8_t face);
+  std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies_;
+  std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies_;
 };
 
 } // namespace cube
