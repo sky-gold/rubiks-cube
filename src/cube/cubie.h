@@ -2,6 +2,8 @@
 
 #include "move.h"
 
+#include <array>
+
 namespace cube {
 
 constexpr auto CORNER_CUBIE_CNT = (7 << 2) + 3;

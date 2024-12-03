@@ -1,5 +1,4 @@
 #include "cubie.h"
-#include <array>
 #include <cassert>
 #include <iostream>
 
