@@ -63,4 +63,17 @@ bool Cube::operator!=(const Cube &other) const {
          corner_cubies_ != other.corner_cubies_;
 }
 
+bool Cube::operator<(const Cube &other) const {
+  return std::tie(edge_cubies_, corner_cubies_) <
+         std::tie(other.edge_cubies_, other.corner_cubies_);
+}
+
+const std::array<uint8_t, EDGE_INDEX_CNT> &Cube::GetEdgeCubies() const {
+  return edge_cubies_;
+}
+
+const std::array<uint8_t, CORNER_INDEX_CNT> &Cube::GetCornerCubies() const {
+  return corner_cubies_;
+}
+
 } // namespace cube

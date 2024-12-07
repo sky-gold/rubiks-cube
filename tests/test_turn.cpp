@@ -6,13 +6,13 @@
 
 namespace {
 
-void TurnMoves(cube::Cube& cube, const std::vector<cube::Move>& moves) {
-    for (auto move: moves) {
-        cube.Turn(move);
-    }
+void TurnMoves(cube::Cube &cube, const std::vector<cube::Move> &moves) {
+  for (auto move : moves) {
+    cube.Turn(move);
+  }
 }
 
-}
+} // namespace
 
 TEST(Turn, TestIsSolved) {
   auto cube = cube::Cube();
@@ -31,9 +31,9 @@ TEST(Turn, TestPifPaf) {
 }
 
 TEST(Turn, TestEqual) {
-    auto first_cube = cube::Cube();
-    auto second_cube = cube::Cube();
-    TurnMoves(first_cube, cube::GetMovesFromString("B'D'B2R'U'"));
-    TurnMoves(second_cube, cube::GetMovesFromString("D'R'B2U'B'"));
-    ASSERT_EQ(first_cube, second_cube);
+  auto first_cube = cube::Cube();
+  auto second_cube = cube::Cube();
+  TurnMoves(first_cube, cube::GetMovesFromString("B'D'B2R'U'"));
+  TurnMoves(second_cube, cube::GetMovesFromString("D'R'B2U'B'"));
+  ASSERT_EQ(first_cube, second_cube);
 }

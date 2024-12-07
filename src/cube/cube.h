@@ -29,6 +29,12 @@ public:
 
   bool operator!=(const Cube &other) const;
 
+  bool operator<(const Cube &other) const;
+
+  const std::array<uint8_t, EDGE_INDEX_CNT> &GetEdgeCubies() const;
+
+  const std::array<uint8_t, CORNER_INDEX_CNT> &GetCornerCubies() const;
+
 private:
   std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies_;
   std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies_;

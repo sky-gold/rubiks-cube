@@ -1,13 +1,14 @@
-#include "cube/move.h"
 #include "cube/cube.h"
+#include "cube/move.h"
+#include "solver/heuristic_function.h"
 #include "solver/solver.h"
 
 #include <iostream>
 #include <string>
 
-cube::Cube getCubeFromString(const std::string& str) {
+cube::Cube getCubeFromString(const std::string &str) {
   cube::Cube cube;
-  for (auto move: cube::GetMovesFromString(str)) {
+  for (auto move : cube::GetMovesFromString(str)) {
     cube.Turn(move);
   }
   return cube;
@@ -15,7 +16,7 @@ cube::Cube getCubeFromString(const std::string& str) {
 
 int main() {
   // cube::CalcPermutationTable();
-  auto solver = solver::Solver(20);
+  auto solver = solver::Solver(solver::HeuristicFunction(), 20);
   std::string line;
   while (std::getline(std::cin, line)) {
     auto cube = getCubeFromString(line);
