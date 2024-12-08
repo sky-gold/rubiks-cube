@@ -36,6 +36,8 @@ TEST(Solver, IsLowerThanActualDistance) {
       const auto cube =
           CubeFromMovesString(moves_string.substr(0, distance * 2));
       const auto heuristic_value = heuristic_function.GetHeuristic(cube);
+      //   std::cout << "heuristic_value=" << heuristic_value << " distance=" <<
+      //   distance << std::endl;
       EXPECT_LE(heuristic_value, distance);
       diff_sum += distance - heuristic_value;
       ++cnt;
