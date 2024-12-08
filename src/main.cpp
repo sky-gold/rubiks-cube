@@ -8,8 +8,11 @@
 
 cube::Cube getCubeFromString(const std::string &str) {
   cube::Cube cube;
+  // std::cout << "cube.hash()=" << cube.GetHash() << std::endl;
   for (auto move : cube::GetMovesFromString(str)) {
+    // std::cout << cube::MoveToString(move) << std::endl;
     cube.Turn(move);
+    // std::cout << "cube.hash()=" << cube.GetHash() << std::endl;
   }
   return cube;
 }

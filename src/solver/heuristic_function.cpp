@@ -69,22 +69,28 @@ size_t find_distance_edge_cubie(uint8_t start, uint8_t end) {
 } // namespace
 
 HeuristicFunction::HeuristicFunction() {
-  for (size_t i = 0; i < cube::CORNER_INDEX_CNT; ++i) {
-    for (size_t pos = 0; pos < cube::CORNER_INDEX_CNT; ++pos) {
-      for (size_t rot = 0; rot < 3; ++rot) {
-        corner_cubie_distance[i][cube::GetCornerCubie(pos, rot)] =
-            find_distance_corner_cubie(cube::GetCornerCubie(pos, rot),
-                                       cube::GetCornerCubie(i, 0));
-      }
+  std::vector<uint8_t> corner_cubies;
+  for (size_t pos = 0; pos < cube::CORNER_INDEX_CNT; ++pos) {
+    for (size_t rot = 0; rot < 3; ++rot) {
+      corner_cubies.push_back(cube::GetCornerCubie(pos, rot));
     }
   }
-  for (size_t i = 0; i < cube::EDGE_INDEX_CNT; ++i) {
-    for (size_t pos = 0; pos < cube::EDGE_INDEX_CNT; ++pos) {
-      for (size_t flip = 0; flip < 2; ++flip) {
-        edge_cubie_distance[i][cube::GetEdgeCubie(pos, flip)] =
-            find_distance_edge_cubie(cube::GetEdgeCubie(pos, flip),
-                                     cube::GetEdgeCubie(i, 0));
-      }
+  for (auto start : corner_cubies) {
+    for (auto finish : corner_cubies) {
+      corner_cubie_distance[start][finish] =
+          find_distance_corner_cubie(start, finish);
+    }
+  }
+  std::vector<uint8_t> edge_cubies;
+  for (size_t pos = 0; pos < cube::EDGE_INDEX_CNT; ++pos) {
+    for (size_t flip = 0; flip < 2; ++flip) {
+      edge_cubies.push_back(cube::GetEdgeCubie(pos, flip));
+    }
+  }
+  for (auto start : edge_cubies) {
+    for (auto finish : edge_cubies) {
+      edge_cubie_distance[start][finish] =
+          find_distance_edge_cubie(start, finish);
     }
   }
 }
@@ -94,14 +100,30 @@ size_t HeuristicFunction::GetHeuristic(const cube::Cube &cube) const {
   const auto &edge_cubies = cube.GetEdgeCubies();
   const auto &corner_cubies = cube.GetCornerCubies();
   for (size_t i = 0; i < edge_cubies.size(); ++i) {
-    if (edge_cubies[i] != cube::GetEdgeCubie(i, 0)) {
-      misplaced_cnt += edge_cubie_distance[i][edge_cubies[i]];
-    }
+    misplaced_cnt +=
+        edge_cubie_distance[cube::GetEdgeCubie(i, 0)][edge_cubies[i]];
   }
   for (size_t i = 0; i < corner_cubies.size(); ++i) {
-    if (corner_cubies[i] != cube::GetCornerCubie(i, 0)) {
-      misplaced_cnt += corner_cubie_distance[i][corner_cubies[i]];
-    }
+    misplaced_cnt +=
+        corner_cubie_distance[cube::GetCornerCubie(i, 0)][corner_cubies[i]];
+  }
+  return (misplaced_cnt + 7) / 8;
+}
+
+size_t HeuristicFunction::GetHeuristic(const cube::Cube &start,
+                                       const cube::Cube &finish) const {
+  size_t misplaced_cnt = 0;
+  const auto &start_edge_cubies = start.GetEdgeCubies();
+  const auto &start_corner_cubies = start.GetCornerCubies();
+  const auto &finish_edge_cubies = finish.GetEdgeCubies();
+  const auto &finish_corner_cubies = finish.GetCornerCubies();
+  for (size_t i = 0; i < cube::EDGE_INDEX_CNT; ++i) {
+    misplaced_cnt +=
+        edge_cubie_distance[start_edge_cubies[i]][finish_edge_cubies[i]];
+  }
+  for (size_t i = 0; i < cube::CORNER_INDEX_CNT; ++i) {
+    misplaced_cnt +=
+        corner_cubie_distance[start_corner_cubies[i]][finish_corner_cubies[i]];
   }
   return (misplaced_cnt + 7) / 8;
 }
