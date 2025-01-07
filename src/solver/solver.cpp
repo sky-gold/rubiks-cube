@@ -48,6 +48,12 @@ size_t Solver::Search(cube::Cube &cube, std::vector<cube::Move> &path,
     if (!path.empty() && face == cube::GetFace(path.back())) {
       continue;
     }
+    if (path.size() >= 2 && face == cube::GetFace(path[path.size() - 2]) &&
+        cube::GetFace(path[path.size() - 2]) ==
+            cube::GetOppositeFace(cube::GetFace(path[path.size() - 1]))) {
+      continue;
+    }
+
     for (int rotation = 1; rotation <= 3; ++rotation) {
       auto move = cube::GetMove(rotation, face);
       path.push_back(move);

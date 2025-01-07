@@ -40,6 +40,10 @@ inline Move GetAntiMove(Move move) {
   return GetMove(4 - getRotation(move), GetFace(move));
 }
 
+inline uint8_t GetOppositeFace(uint8_t face) {
+  return (face ^ 1);
+}
+
 Move GetMoveFromString(const std::string &move_string);
 
 std::vector<Move> GetMovesFromString(const std::string &moves_string);
