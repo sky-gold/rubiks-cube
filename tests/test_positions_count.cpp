@@ -41,7 +41,7 @@ std::vector<int> bfs(const cube::Cube flat_cube, int limit) {
 TEST(PositionsCount, TestBFS) {
   std::vector<int> positions_count = bfs(cube::Cube(), 6);
   std::vector<int> expected_count = {
-      1,     18,     243,    3240,
-      43239, 574908}; //, 7618438 Values from https://www.cube20.org/
+      1,    18,    243,
+      3240, 43239, 574908}; //, 7618438 Values from https://www.cube20.org/
   EXPECT_EQ(positions_count, expected_count);
 }
