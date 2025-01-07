@@ -1,7 +1,6 @@
 #include "solver.h"
 
 #include <limits>
-#include <iostream>
 
 namespace solver {
 
@@ -29,7 +28,10 @@ std::optional<std::vector<cube::Move>> Solver::Solve(cube::Cube start) {
   }
 }
 
-size_t Solver::Search(cube::Cube & cube, std::vector<cube::Move>& path, size_t distance, std::optional<std::vector<cube::Move>>& result, size_t bound) {
+size_t Solver::Search(cube::Cube &cube, std::vector<cube::Move> &path,
+                      size_t distance,
+                      std::optional<std::vector<cube::Move>> &result,
+                      size_t bound) {
   if (result.has_value()) {
     return 0;
   }
@@ -42,24 +44,26 @@ size_t Solver::Search(cube::Cube & cube, std::vector<cube::Move>& path, size_t d
     return f;
   }
   size_t min = INF;
-   for (int face = 0; face < 6; ++face) {
-      for (int rotation = 1; rotation <= 3; ++rotation) {
-        auto move = cube::GetMove(rotation, face);
-        path.push_back(move);
-        cube.Turn(move);
-        size_t node_bound = Search(cube, path, distance + 1, result, bound);
-        if (result.has_value()) {
-          return 0;
-        }
-        if (min > node_bound) {
-          min = node_bound;
-        }
-        cube.Turn(cube::GetAntiMove(move));
-        path.pop_back();
+  for (int face = 0; face < 6; ++face) {
+    if (!path.empty() && face == cube::GetFace(path.back())) {
+      continue;
+    }
+    for (int rotation = 1; rotation <= 3; ++rotation) {
+      auto move = cube::GetMove(rotation, face);
+      path.push_back(move);
+      cube.Turn(move);
+      size_t node_bound = Search(cube, path, distance + 1, result, bound);
+      if (result.has_value()) {
+        return 0;
       }
-   }
-   return min;
+      if (min > node_bound) {
+        min = node_bound;
+      }
+      cube.Turn(cube::GetAntiMove(move));
+      path.pop_back();
+    }
+  }
+  return min;
 }
-
 
 } // namespace solver
