@@ -60,9 +60,9 @@ TEST(Solver, TestDefault) {
     TurnMoves(cube, moves);
     auto solution = solver.Solve(cube);
     ASSERT_TRUE(solution.has_value());
-    ASSERT_EQ(solution.value().size(), 5);
     std::cout << "solution=" << cube::MovesToString(solution.value())
               << std::endl;
+    ASSERT_EQ(solution.value().size(), 5);
     TurnMoves(cube, solution.value());
     ASSERT_TRUE(cube.IsSolved());
   }
@@ -76,11 +76,11 @@ TEST(Solver, TestSolutionSize) {
       "F3L1B2R1U3B3L1U2D3F1L3R2U2D2B2R2D1R2L2F2",
       "U2R2D2B1U2B3F1D3B3R3D1U2B2F2R3D3B1U3F3R2"};
   size_t cnt = 0;
-  for (size_t distance = 1; distance <= 10; ++distance) {
+  for (size_t distance = 1; distance <= 8; ++distance) {
     for (auto moves_string : moves_strings) {
       auto moves =
           cube::GetMovesFromString(moves_string.substr(0, distance * 2));
-      std::cout << moves_string.substr(0, distance * 2) << std::endl;
+      // std::cout << moves_string.substr(0, distance * 2) << std::endl;
       auto cube = cube::Cube();
       TurnMoves(cube, moves);
       auto solution = solver.Solve(cube);

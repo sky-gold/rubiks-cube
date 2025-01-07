@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../cube/cube.h"
+#include "cubie_distance.h"
+
 namespace solver {
 
 class HeuristicFunction {
@@ -11,10 +13,7 @@ public:
   size_t GetHeuristic(const cube::Cube &start, const cube::Cube &finish) const;
 
 private:
-  std::array<std::array<size_t, cube::CORNER_CUBIE_CNT>, cube::CORNER_CUBIE_CNT>
-      corner_cubie_distance{};
-  std::array<std::array<size_t, cube::EDGE_CUBIE_CNT>, cube::EDGE_CUBIE_CNT>
-      edge_cubie_distance{};
+  const CubieDistance cubie_distance_{};
 };
 
 } // namespace solver

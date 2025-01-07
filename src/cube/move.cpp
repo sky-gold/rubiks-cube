@@ -84,12 +84,14 @@ std::string MoveToString(Move move) {
   }
   switch (getRotation(move)) {
   case 1:
+    result += "1";
     break;
   case 2:
     result += "2";
     break;
   case 3:
-    result += "'";
+    // result += "'";
+    result += "3";
     break;
   default:
     throw std::logic_error("Unsupported rotation type = " +
