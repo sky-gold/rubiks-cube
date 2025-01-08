@@ -1,5 +1,6 @@
 #include "solver.h"
 
+#include <iostream>
 #include <limits>
 
 namespace solver {
@@ -8,7 +9,7 @@ namespace {
 
 constexpr size_t INF = std::numeric_limits<size_t>::max();
 
-}
+} // namespace
 
 Solver::Solver(HeuristicFunction h_func, size_t threshold)
     : threshold_(threshold), h_func_(std::move(h_func)){};
@@ -44,16 +45,26 @@ size_t Solver::Search(cube::Cube &cube, std::vector<cube::Move> &path,
     return f;
   }
   size_t min = INF;
+  uint8_t repeated_face = 7;
+  if (!path.empty()) {
+    repeated_face = cube::GetFace(path.back());
+  }
+  uint8_t repeated_opposite_face = 7;
+  if (path.size() >= 2 &&
+      cube::GetFace(path[path.size() - 2]) ==
+          cube::GetOppositeFace(cube::GetFace(path[path.size() - 1]))) {
+    repeated_opposite_face = cube::GetFace(path[path.size() - 2]);
+  }
+  if (!path.empty() &&
+      cube::GetOppositeFace(cube::GetFace(path[path.size() - 1])) <
+          cube::GetFace(path[path.size() - 1])) {
+    repeated_opposite_face =
+        cube::GetOppositeFace(cube::GetFace(path[path.size() - 1]));
+  }
   for (int face = 0; face < 6; ++face) {
-    if (!path.empty() && face == cube::GetFace(path.back())) {
+    if (face == repeated_face || face == repeated_opposite_face) {
       continue;
     }
-    if (path.size() >= 2 && face == cube::GetFace(path[path.size() - 2]) &&
-        cube::GetFace(path[path.size() - 2]) ==
-            cube::GetOppositeFace(cube::GetFace(path[path.size() - 1]))) {
-      continue;
-    }
-
     for (int rotation = 1; rotation <= 3; ++rotation) {
       auto move = cube::GetMove(rotation, face);
       path.push_back(move);

@@ -19,6 +19,7 @@ private:
 
   const size_t threshold_;
   const HeuristicFunction h_func_;
+
 };
 
 } // namespace solver
