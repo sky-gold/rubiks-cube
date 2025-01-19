@@ -11,8 +11,8 @@ constexpr size_t INF = std::numeric_limits<size_t>::max();
 
 } // namespace
 
-Solver::Solver(HeuristicFunction h_func, size_t threshold)
-    : threshold_(threshold), h_func_(std::move(h_func)){};
+Solver::Solver(HeuristicFunction&& h_func)
+    : h_func_(std::move(h_func)){};
 
 std::optional<std::vector<cube::Move>> Solver::Solve(cube::Cube start) {
   size_t bound = h_func_.GetHeuristic(start);

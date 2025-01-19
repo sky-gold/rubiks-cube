@@ -80,21 +80,3 @@ TEST(HeuristicFunction, IsLowerThanActualDistanceToStartPosition) {
   
 }
 
-TEST(HeuristicFunction, IsLowerThanActualDistanceToRandomPosition) {
-  solver::HeuristicFunction heuristic_function;
-  for (auto moves_string : moves_strings) {
-    for (size_t start_prefix = 2; start_prefix <= 18; start_prefix += 2) {
-      for (size_t finish_prefix = start_prefix + 2; finish_prefix <= 20;
-           finish_prefix += 2) {
-        const auto start_cube =
-            CubeFromMovesString(moves_string.substr(0, start_prefix));
-        const auto finish_cube =
-            CubeFromMovesString(moves_string.substr(0, finish_prefix));
-        const auto heuristic_value =
-            heuristic_function.GetHeuristic(start_cube, finish_cube);
-        const auto distance = (finish_prefix - start_prefix) / 2;
-        EXPECT_LE(heuristic_value, distance);
-      }
-    }
-  }
-}

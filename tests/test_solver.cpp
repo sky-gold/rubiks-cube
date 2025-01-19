@@ -26,7 +26,7 @@ void TurnMoves(cube::Cube &cube, const std::vector<cube::Move> &moves) {
 }
 
 solver::Solver GetSolver() {
-  return solver::Solver(solver::HeuristicFunction(), 20);
+  return solver::Solver(std::move(solver::HeuristicFunction()));
 }
 
 } // namespace
