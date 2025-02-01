@@ -13,7 +13,11 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     # UndefinedBehaviorSanitizer
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
+else()
+    # Add -O3 for non-debug builds
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 endif()
+
 
 # Add subdirectories for source and test files
 add_subdirectory(src)
