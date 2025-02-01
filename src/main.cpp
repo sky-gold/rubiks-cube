@@ -1,6 +1,6 @@
 #include "cube/cube.h"
 #include "cube/move.h"
-#include "solver/heuristic_function.h"
+#include "heuristic/heuristic_function.h"
 #include "solver/solver.h"
 
 #include <iostream>
@@ -15,7 +15,7 @@ cube::Cube getCubeFromString(const std::string &str) {
 }
 
 int main() {
-  auto heuristic_function = solver::HeuristicFunction();
+  auto heuristic_function = heuristic::HeuristicFunction();
   auto solver = solver::Solver(std::move(heuristic_function));
   std::string line;
   while (std::getline(std::cin, line)) {

@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <iostream>
 
-namespace solver {
+namespace heuristic {
 
 namespace {
 
@@ -109,7 +109,6 @@ size_t CubieDistance::GetHeuristic(const cube::Cube &start,
     corner_distance_sum += corner_cubie_distance[start_corner_cubies[i]][finish_corner_cubies[i]];        
   }
   return std::max(((edge_distance_sum + 3) / 4), ((corner_distance_sum + 3) / 4));
-  // return (edge_distance_sum + corner_distance_sum + 7) / 8;
 }
 
-} // namespace solver
+} // namespace heuristic

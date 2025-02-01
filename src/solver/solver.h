@@ -1,6 +1,6 @@
 #pragma once
 
-#include "heuristic_function.h"
+#include "../heuristic/heuristic_function.h"
 
 #include <optional>
 
@@ -8,7 +8,7 @@ namespace solver {
 
 class Solver {
 public:
-  Solver(HeuristicFunction&& h_func);
+  Solver(heuristic::HeuristicFunction&& h_func);
 
   std::optional<std::vector<cube::Move>> Solve(cube::Cube start);
 
@@ -17,7 +17,7 @@ private:
                 size_t distance, std::optional<std::vector<cube::Move>> &result,
                 size_t bound);
 
-  const HeuristicFunction h_func_;
+  const heuristic::HeuristicFunction h_func_;
 
 };
 

@@ -2,7 +2,7 @@
 
 #include "../cube/cube.h"
 
-namespace solver {
+namespace heuristic {
 
 class CubieDistance {
 public:
@@ -18,4 +18,4 @@ private:
 };
 
 
-} // namespace solver
+} // namespace heuristic

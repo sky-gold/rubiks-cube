@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "solver/heuristic_function.h"
+#include "heuristic/heuristic_function.h"
 #include "solver/solver.h"
 
 #include <random>
@@ -26,7 +26,7 @@ void TurnMoves(cube::Cube &cube, const std::vector<cube::Move> &moves) {
 }
 
 solver::Solver GetSolver() {
-  return solver::Solver(std::move(solver::HeuristicFunction()));
+  return solver::Solver(std::move(heuristic::HeuristicFunction()));
 }
 
 } // namespace
