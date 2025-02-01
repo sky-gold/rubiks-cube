@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../cube/cube.h"
-#include "cubie_distance.h"
 #include "corner_pattern_database.h"
 #include "left_edge_pattern_database.h"
 #include "right_edge_pattern_database.h"
+#include "position_edge_pattern_database.h"
 
 namespace heuristic {
 
@@ -16,7 +16,7 @@ private:
   const LeftEdgePatternDatabase left_edge_pattern_database_{};
   const RightEdgePatternDatabase right_edge_pattern_database_{};
   const CornerPatternDatabase corner_pattern_database_{};
-  const CubieDistance cubie_distance_{};
+  const PositionEdgePatternDatabase position_edge_pattern_database_{};
 };
 
 } // namespace heuristic
