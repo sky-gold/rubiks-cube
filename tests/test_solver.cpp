@@ -5,9 +5,10 @@
 
 #include <random>
 
-std::mt19937 rnd(123);
 
 namespace {
+
+std::mt19937 rnd(123);
 
 std::vector<cube::Move> getRandomMoves(size_t n) {
   std::uniform_int_distribution<> face_dis(0, 5);

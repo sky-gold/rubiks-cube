@@ -18,10 +18,8 @@ def download_file_from_yandex_disk(download_url, save_directory):
 if __name__ == "__main__":
     
     urls = [
-        "https://disk.yandex.ru/d/UynliWCkME74Sg",
-        "https://disk.yandex.ru/d/BlQm9yfIn3Zm-w",
-        "https://disk.yandex.ru/d/_T7TVprl9SbPPw",
-        "https://disk.yandex.ru/d/tUQ1vfyiXjP3GQ",
+        "https://disk.yandex.ru/d/JUb4Ywvfnn_QEg",
+        "https://disk.yandex.ru/d/s17PWdErohIdgQ",
     ]
     
     for download_url in urls:

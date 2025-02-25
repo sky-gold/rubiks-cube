@@ -2,24 +2,29 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "corner_coordinate_calculator.h"
+#include "left_edge_coordinate_calculator.h"
+
+
 namespace heuristic {
 
-
-HeuristicFunction::HeuristicFunction() {}
+HeuristicFunction::HeuristicFunction() {
+  pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<LeftEdgeCoordinateCalculator>(8), "l8epdb.bin"));
+  pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<CornerCoordinateCalculator>(), "cpdb.bin", 11));
+}
 
 size_t HeuristicFunction::GetHeuristic(const cube::Cube &cube) const {
-  auto left_edge_pattern_database_value = left_edge_pattern_database_.Get(cube);
-  auto right_edge_pattern_database_value = right_edge_pattern_database_.Get(cube);
-  auto position_edge_pattern_database_value = position_edge_pattern_database_.Get(cube);
-  auto result = corner_pattern_database_.Get(cube);
-  if (left_edge_pattern_database_value > result) {
-    result = left_edge_pattern_database_value;
+  if (pdbs_.empty()) {
+    return 0;
   }
-  if (right_edge_pattern_database_value > result) {
-    result = right_edge_pattern_database_value;
-  }
-  if (position_edge_pattern_database_value > result) {
-    result = position_edge_pattern_database_value;
+  size_t result = pdbs_.front().GetHeuristic(cube);
+  for (size_t i = 1; i < pdbs_.size(); ++i) {
+    if (pdbs_[i].GetMaxValue() >= result) {
+      size_t new_result = pdbs_[i].GetHeuristic(cube);
+      if (new_result > result) {
+        result = new_result;
+      }
+    }
   }
   return result;
 }

@@ -18,6 +18,7 @@ using CubeLayout = std::array<std::vector<uint8_t>, FACES_COUNT>;
 class Cube {
 public:
   Cube();
+  Cube(std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies, std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies);
 
   bool IsSolved() const;
 
