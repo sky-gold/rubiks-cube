@@ -4,6 +4,7 @@
 #include <future>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 namespace solver {
 
@@ -61,24 +62,38 @@ std::optional<std::vector<cube::Move>> Solver::Solve(cube::Cube start) {
 }
 
 size_t Solver::ParallelSearch(const cube::Cube& start, size_t bound) {
-    const auto first_moves = GenerateAllMoves();
-    const auto ranges = DivideTasks(18, num_threads_);
+    std::vector<std::pair<size_t, cube::Move>> sorted_moves;
+    sorted_moves.reserve(18);
+
+    for (int face = 0; face < 6; ++face) {
+        for (int rotation = 1; rotation <= 3; ++rotation) {
+            auto move = cube::GetMove(rotation, face);
+            cube::Cube local_cube = start;
+            local_cube.Turn(move);
+            sorted_moves.push_back({h_func_.GetHeuristic(local_cube), move});
+        }
+    }
+
+    std::sort(sorted_moves.begin(), sorted_moves.end());
+
+    std::atomic<size_t> current_index{0};
     std::vector<std::future<size_t>> futures;
 
     for (size_t i = 0; i < num_threads_; ++i) {
-        futures.emplace_back(std::async(std::launch::async, [this, start, bound, i, &ranges, &first_moves]() {
+        futures.emplace_back(std::async(std::launch::async, [this, start, bound, &current_index, &sorted_moves]() {
             size_t local_min_bound = INF;
-            const size_t start_index = ranges[i].first;
-            const size_t end_index = ranges[i].second;
 
-            for (size_t j = start_index; j < end_index; ++j) {
-                if (found_solution_.load(std::memory_order_relaxed)) {
+            while (true) {
+                size_t j = current_index.fetch_add(1, std::memory_order_acquire);
+                
+                if (j >= sorted_moves.size() || found_solution_.load(std::memory_order_acquire)) {
                     break;
                 }
 
                 cube::Cube local_cube = start;
-                local_cube.Turn(first_moves[j]);
-                std::vector<cube::Move> local_path = {first_moves[j]};
+                auto move = sorted_moves[j].second;
+                local_cube.Turn(move);
+                std::vector<cube::Move> local_path = {move};
                 size_t current_bound = this->Search(local_cube, local_path, 1, bound);
 
                 if (current_bound < local_min_bound) {
@@ -101,7 +116,7 @@ size_t Solver::ParallelSearch(const cube::Cube& start, size_t bound) {
     return global_min_bound;
 }
 
-size_t Solver::Search(cube::Cube& cube, std::vector<cube::Move>& path, size_t distance, size_t bound) {
+size_t Solver::Search(cube::Cube& cube, std::vector<cube::Move>& path, size_t distance, size_t bound, std::optional<size_t> maybe_h ) {
     if (found_solution_.load(std::memory_order_relaxed)) {
         return 0;
     }
@@ -114,8 +129,8 @@ size_t Solver::Search(cube::Cube& cube, std::vector<cube::Move>& path, size_t di
         }
         return 0;
     }
-
-    size_t f = distance + h_func_.GetHeuristic(cube);
+    size_t h = maybe_h.has_value() ? maybe_h.value() : h_func_.GetHeuristic(cube);
+    size_t f = distance + h;
     if (f > bound) {
         return f;
     }
@@ -137,22 +152,33 @@ size_t Solver::Search(cube::Cube& cube, std::vector<cube::Move>& path, size_t di
         repeated_opposite_face = cube::GetOppositeFace(cube::GetFace(path[path.size() - 1]));
     }
 
+    std::vector<std::pair<size_t, cube::Move>> moves;
+    moves.reserve(15);
+
     for (int face = 0; face < 6; ++face) {
         if (face == repeated_face || face == repeated_opposite_face) {
             continue;
         }
         for (int rotation = 1; rotation <= 3; ++rotation) {
             auto move = cube::GetMove(rotation, face);
-            path.push_back(move);
             cube.Turn(move);
-            size_t node_bound = Search(cube, path, distance + 1, bound);
-
-            if (node_bound < min) {
-                min = node_bound;
-            }
+            moves.push_back({h_func_.GetHeuristic(cube), move});
             cube.Turn(cube::GetAntiMove(move));
-            path.pop_back();
         }
+    }
+
+    std::sort(moves.begin(), moves.end());
+
+    for (auto [next_h, move]: moves) {
+        path.push_back(move);
+        cube.Turn(move);
+        size_t node_bound = Search(cube, path, distance + 1, bound, next_h);
+
+        if (node_bound < min) {
+            min = node_bound;
+        }
+        cube.Turn(cube::GetAntiMove(move));
+        path.pop_back();
     }
 
     return min;

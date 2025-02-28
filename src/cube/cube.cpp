@@ -74,4 +74,17 @@ const std::array<uint8_t, EDGE_INDEX_CNT>& Cube::GetEdgeCubies() const { return 
 
 const std::array<uint8_t, CORNER_INDEX_CNT>& Cube::GetCornerCubies() const { return corner_cubies_; }
 
+cube::Cube Cube::GetAntiCube() const {
+    std::array<uint8_t, EDGE_INDEX_CNT> new_edge_cubies;
+    std::array<uint8_t, CORNER_INDEX_CNT> new_corner_cubies;
+    for (size_t i = 0; i < EDGE_INDEX_CNT; ++i) {
+        new_edge_cubies[GetEdgeCubiePosition(edge_cubies_[i])] = GetEdgeCubie(i, GetEdgeCubieFlip(edge_cubies_[i]));
+    }
+    for (size_t i = 0; i < CORNER_INDEX_CNT; ++i) {
+        new_corner_cubies[GetCornerCubiePosition(corner_cubies_[i])] =
+            GetCornerCubie(i, ((3 - GetCornerCubieRotation(corner_cubies_[i])) % 3));
+    }
+    return cube::Cube(std::move(new_edge_cubies), std::move(new_corner_cubies));
+}
+
 }  // namespace cube

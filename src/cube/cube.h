@@ -17,36 +17,39 @@ using CubeLayout = std::array<std::vector<uint8_t>, FACES_COUNT>;
 
 class Cube {
 public:
-  Cube();
-  Cube(std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies, std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies);
+    Cube();
+    Cube(std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies, std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies);
 
-  bool IsSolved() const;
+    bool IsSolved() const;
 
-  void Turn(Move move);
+    void Turn(Move move);
 
-  size_t GetHash() const;
+    size_t GetHash() const;
 
-  bool operator==(const Cube &other) const;
+    bool operator==(const Cube& other) const;
 
-  bool operator!=(const Cube &other) const;
+    bool operator!=(const Cube& other) const;
 
-  bool operator<(const Cube &other) const;
+    bool operator<(const Cube& other) const;
 
-  const std::array<uint8_t, EDGE_INDEX_CNT> &GetEdgeCubies() const;
+    const std::array<uint8_t, EDGE_INDEX_CNT>& GetEdgeCubies() const;
 
-  const std::array<uint8_t, CORNER_INDEX_CNT> &GetCornerCubies() const;
+    const std::array<uint8_t, CORNER_INDEX_CNT>& GetCornerCubies() const;
+
+    cube::Cube GetAntiCube() const;
 
 private:
-  std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies_;
-  std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies_;
+    std::array<uint8_t, EDGE_INDEX_CNT> edge_cubies_;
+    std::array<uint8_t, CORNER_INDEX_CNT> corner_cubies_;
 };
 
-} // namespace cube
+}  // namespace cube
 
 namespace std {
 
-template <> struct hash<cube::Cube> {
-  size_t operator()(const cube::Cube &cube) const { return cube.GetHash(); }
+template <>
+struct hash<cube::Cube> {
+    size_t operator()(const cube::Cube& cube) const { return cube.GetHash(); }
 };
 
-} // namespace std
+}  // namespace std

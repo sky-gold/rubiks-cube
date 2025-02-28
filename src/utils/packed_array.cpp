@@ -19,13 +19,16 @@ PackedArray::PackedArray(size_t n, unsigned int bits_per_element)
         return;
     }
 
-    if (!TryAllocate(HugePageSize::Huge1GB)) {
-        if (!TryAllocate(HugePageSize::Huge2MB)) {
-            if (!TryAllocate(HugePageSize::Normal)) {
-                throw std::bad_alloc();
-            }
-        }
+    if (TryAllocate(HugePageSize::Huge1GB)) {
+        return;
     }
+    if (TryAllocate(HugePageSize::Huge2MB)) {
+        return;
+    }
+    if (TryAllocate(HugePageSize::Normal)) {
+        return;
+    }
+    throw std::bad_alloc();
 }
 
 PackedArray::~PackedArray() {
