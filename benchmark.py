@@ -1,36 +1,65 @@
 import subprocess
-import re
 import time
+import os
 
-def run_command(file_number):
-    command = f"/bin/time -v build/src/rubiks_cube_solver < static/{file_number}.txt"
-    timeout_min = 120
-    try:
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout= timeout_min * 60)
-        output = result.stderr
-
-        user_time_match = re.search(r"User time \(seconds\): (\d+\.\d+)", output)
-        max_rss_match = re.search(r"Maximum resident set size \(kbytes\): (\d+)", output)
-
-        if user_time_match and max_rss_match:
-            user_time = float(user_time_match.group(1))
-            max_rss = int(max_rss_match.group(1))
-            return user_time, max_rss
+def format_time(avg_time):
+    total_seconds = avg_time
+    hours = int(total_seconds // 3600)
+    remainder = total_seconds % 3600
+    minutes = int(remainder // 60)
+    seconds = remainder % 60
+    
+    parts = []
+    if hours > 0:
+        parts.append(f"{hours}h")
+    if minutes > 0:
+        parts.append(f"{minutes}m")
+    if seconds >= 0.1 or (hours == 0 and minutes == 0):
+        if seconds.is_integer():
+            parts.append(f"{int(seconds)}s")
         else:
-            return None, None
-    except subprocess.TimeoutExpired:
-        return None, None
+            parts.append(f"{seconds:.1f}s")
+    
+    return ' '.join(parts) or "0s"
 
-distance_width = 23
-time_width = 17
-memory_width = 19
+filenames = ["static/random5.txt"]
+for i in range(1, 19):
+    filenames.append(f"static/{i}.txt")
 
-print(f"| Расстояние от решения {' ' * (distance_width - 23)} | Время (секунды) {' ' * (time_width - 17)} | Память (килобайты){' ' * (memory_width - 22)} |")
-print("|------------------------|------------------|--------------------|")
+header = (
+    "| Файл с позициями        | Количество позиций | Общее время (секунды) | Среднее время на позицию |"
+)
+separator = "|-------------------------|--------------------|-----------------------|--------------------------|"
 
-for i in range(1, 18):
-    user_time, max_rss = run_command(i)
-    if user_time is not None and max_rss is not None:
-        print(f"| {i} {' ' * (distance_width - len(str(i)) - 2)} | {user_time} {' ' * (time_width - len(str(user_time)) - 2)} | {max_rss} {' ' * (memory_width - len(str(max_rss)) - 2)} |")
-    else:
-        print(f"| {i} {' ' * (distance_width - len(str(i)) - 2)} | >15 мин {' ' * (time_width - 9)} | ??? {' ' * (memory_width - 5)} |")
+
+print(header)
+print(separator)
+
+
+for filename in filenames:
+    if not os.path.isfile(filename):
+        print(f"Файл {filename} не найден, пропускаем.")
+        continue
+
+    start_time = time.time()
+    
+    with open(filename, 'r') as f:
+        subprocess.run(
+            ['./build/src/rubiks_cube_solver'],
+            stdin=f,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+    
+    total_time = time.time() - start_time
+    
+    with open(filename, 'r') as f:
+        lines_count = sum(1 for line in f if line.strip())
+    
+    avg_time = total_time / max(1, lines_count)
+    print(
+        f"| {filename.ljust(23)} "
+        f"| {str(lines_count).center(18)} "
+        f"| {total_time:>21.1f} "
+        f"| {format_time(avg_time).rjust(24)} |"
+    )

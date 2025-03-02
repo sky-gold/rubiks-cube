@@ -5,10 +5,13 @@
 #include "corner_coordinate_calculator.h"
 #include "left_edge_coordinate_calculator.h"
 #include "right_edge_coordinate_calculator.h"
+#include "position_edge_coordinate_calculator.h"
+
 
 namespace heuristic {
 
 HeuristicFunction::HeuristicFunction() {
+    pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<PositionEdgeCoordinateCalculator>(5), "p12o5epdb.bin"));
     pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<LeftEdgeCoordinateCalculator>(8), "l8epdb.bin"));
     pdbs_.emplace_back(
         PatternDatabaseHeuristic(0, 4, std::make_unique<RightEdgeCoordinateCalculator>(8), "r8epdb.bin", 12)

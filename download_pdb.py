@@ -21,6 +21,7 @@ if __name__ == "__main__":
         "https://disk.yandex.ru/d/JUb4Ywvfnn_QEg",
         "https://disk.yandex.ru/d/s17PWdErohIdgQ",
         "https://disk.yandex.ru/d/UkKlJDns0yJdfg",
+        "https://disk.yandex.ru/d/i9TwX9RM3gEPkw"
     ]
     
     for download_url in urls:
