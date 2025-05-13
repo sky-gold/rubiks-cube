@@ -8,7 +8,7 @@ TEST_DIR := tests
 
 build:
 	@mkdir -p $(BUILD_DIR)
-	@cd $(BUILD_DIR) && cmake .. && make
+	@cd $(BUILD_DIR) && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. && make
 
 debug_build:
 	@mkdir -p $(BUILD_DIR)

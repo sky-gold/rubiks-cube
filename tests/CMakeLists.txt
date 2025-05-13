@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.14)
+
 include(FetchContent)
 
 # Fetch GoogleTest
@@ -20,7 +22,11 @@ target_link_libraries(unit_tests
 )
 
 # Include directories (including where GoogleTest is built)
-target_include_directories(unit_tests PRIVATE ${gtest_SOURCE_DIR}/include)
+target_link_libraries(unit_tests PRIVATE gtest_main gmock_main)
+target_include_directories(unit_tests PRIVATE 
+    ${PROJECT_SOURCE_DIR}/src
+    ${CMAKE_BINARY_DIR}/_deps/googletest-src/googletest/include
+)
 
 # Add include directories for tests to find headers
 target_include_directories(unit_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
