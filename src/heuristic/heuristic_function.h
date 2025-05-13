@@ -6,9 +6,15 @@
 
 namespace heuristic {
 
+enum class PDBSize {
+    Low,
+    Mid,
+    High
+};
+
 class HeuristicFunction {
 public:
-  HeuristicFunction();
+  HeuristicFunction(PDBSize size=PDBSize::High);
   HeuristicFunction(HeuristicFunction&& other) noexcept = default;
 
   HeuristicFunction &operator=(HeuristicFunction &&) = default;

@@ -10,13 +10,30 @@
 
 namespace heuristic {
 
-HeuristicFunction::HeuristicFunction() {
-    pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<PositionEdgeCoordinateCalculator>(5), "p12o5epdb.bin"));
-    pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<LeftEdgeCoordinateCalculator>(8), "l8epdb.bin"));
-    pdbs_.emplace_back(
-        PatternDatabaseHeuristic(0, 4, std::make_unique<RightEdgeCoordinateCalculator>(8), "r8epdb.bin", 12)
-    );
-    pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<CornerCoordinateCalculator>(), "cpdb.bin", 11));
+HeuristicFunction::HeuristicFunction(PDBSize size) {
+    switch(size) {
+        case PDBSize::Low: // 44.1 MB
+            pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<CornerCoordinateCalculator>(), "cpdb.bin", 11));
+            break;
+            
+        case PDBSize::Mid: // 5.2 GB
+            pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<LeftEdgeCoordinateCalculator>(8), "l8epdb.bin"));
+            pdbs_.emplace_back(
+                PatternDatabaseHeuristic(0, 4, std::make_unique<RightEdgeCoordinateCalculator>(8), "r8epdb.bin", 12)
+            );
+            pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<CornerCoordinateCalculator>(), "cpdb.bin", 11));
+            break;
+            
+        case PDBSize::High: // 13 GB
+            pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<LeftEdgeCoordinateCalculator>(8), "l8epdb.bin"));
+            pdbs_.emplace_back(
+                PatternDatabaseHeuristic(0, 4, std::make_unique<RightEdgeCoordinateCalculator>(8), "r8epdb.bin", 12)
+            );
+            pdbs_.emplace_back(PatternDatabaseHeuristic(0, 4, std::make_unique<CornerCoordinateCalculator>(), "cpdb.bin", 11));
+            break;
+    }
+    
+    
 }
 
 size_t HeuristicFunction::GetHeuristic(const cube::Cube& cube) const {

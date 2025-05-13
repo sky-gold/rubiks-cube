@@ -10,7 +10,7 @@ namespace solver {
 
 class Solver {
 public:
-    Solver(heuristic::HeuristicFunction&& h_func);
+    Solver(heuristic::HeuristicFunction&& h_func, size_t num_threads=4);
 
     std::optional<std::vector<cube::Move>> Solve(cube::Cube start);
 
@@ -23,7 +23,7 @@ private:
     std::optional<std::vector<cube::Move>> shared_result_;
     std::mutex result_mutex_;
     std::atomic<bool> found_solution_;
-    size_t num_threads_ = 3;
+    size_t num_threads_ = 4;
 };
 
 }  // namespace solver

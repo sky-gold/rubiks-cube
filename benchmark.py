@@ -22,9 +22,11 @@ def format_time(avg_time):
     
     return ' '.join(parts) or "0s"
 
-filenames = ["static/random5.txt"]
+filenames = []
 for i in range(1, 19):
     filenames.append(f"static/{i}.txt")
+
+# filenames.append("static/random5.txt")
 
 header = (
     "| Файл с позициями        | Количество позиций | Общее время (секунды) | Среднее время на позицию |"
